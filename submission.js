@@ -207,9 +207,7 @@ export function initializeSubmissionForm(userParams = {}) {
         video_title: videoTitle,
         team_count: parseInt(teamCount),
         video_url: uploadResult.publicUrl,
-        full_name: userParams.full_name || null,
-        username: userParams.username || null,
-        tg_id: userParams.tg_id || null
+        tg_id: null // Will be set by third-party system
       };
 
       // Call edge function

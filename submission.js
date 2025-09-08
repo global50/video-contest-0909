@@ -112,7 +112,7 @@ export function initializeSubmissionForm(userParams = {}) {
       </div>
       <div class="upload-details">
         <span class="upload-speed">0 MB/s</span>
-        <span class="upload-eta">Calculating...</span>
+        <span class="upload-eta">Считаем...</span>
       </div>
     `;
     

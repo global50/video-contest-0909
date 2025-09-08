@@ -155,3 +155,4 @@ function initializeDashboard() {
       loadDashboard();
     }
   }, 30000);
+}

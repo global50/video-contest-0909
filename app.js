@@ -42,10 +42,6 @@ document.addEventListener('DOMContentLoaded', function() {
   function renderSubmit() {
     app.innerHTML = `
       <header>
-        <nav>
-          <button onclick="router.navigate('/')" class="nav-link">← Back to Home</button>
-          <button onclick="router.navigate('/manager')" class="nav-link">View Dashboard</button>
-        </nav>
         <h1>Video Contest Submission</h1>
       </header>
       
@@ -112,10 +108,6 @@ document.addEventListener('DOMContentLoaded', function() {
   function renderManager() {
     app.innerHTML = `
       <header>
-        <nav>
-          <button onclick="router.navigate('/')" class="nav-link">← Back to Home</button>
-          <button onclick="router.navigate('/submit')" class="nav-link">New Submission</button>
-        </nav>
         <h1>Contest Participants</h1>
       </header>
       

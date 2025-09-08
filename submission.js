@@ -104,7 +104,7 @@ export function initializeSubmissionForm(userParams = {}) {
     progressContainer.className = 'upload-progress-container';
     progressContainer.innerHTML = `
       <div class="upload-progress-header">
-        <span class="upload-status">Uploading video...</span>
+        <span class="upload-status">Загрузка...</span>
         <span class="upload-percentage">0%</span>
       </div>
       <div class="progress-bar">

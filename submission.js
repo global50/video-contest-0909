@@ -146,7 +146,7 @@ export function initializeSubmissionForm(userParams = {}) {
     if (eta > 0 && eta < Infinity) {
       const minutes = Math.floor(eta / 60);
       const seconds = Math.floor(eta % 60);
-      etaSpan.textContent = minutes > 0 ? `${minutes}m ${seconds}s remaining` : `${seconds}s remaining`;
+      etaSpan.textContent = minutes > 0 ? `${minutes}m ${seconds}s осталось` : `${seconds}s remaining`;
     } else {
       etaSpan.textContent = 'Считаем...';
     }

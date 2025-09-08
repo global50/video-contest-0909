@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         <div class="submissions-section">
           <div class="section-header">
-            <h2>Submitted Videos</h2>
+            <h2>Заявки</h2>
           </div>
           
           <div class="table-container">

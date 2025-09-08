@@ -40,6 +40,66 @@ class VideoContestStorage {
     }
   }
 
+  // Upload video file with progress tracking using XMLHttpRequest
+  async uploadVideoWithProgress(file, onProgress) {
+    return new Promise((resolve, reject) => {
+      try {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+        const filePath = `videos/${fileName}`;
+        
+        // Get upload URL from Supabase
+        const supabaseUrl = window.VITE_SUPABASE_URL;
+        const supabaseKey = window.VITE_SUPABASE_ANON_KEY;
+        const uploadUrl = `${supabaseUrl}/storage/v1/object/${this.bucketName}/${filePath}`;
+        
+        const xhr = new XMLHttpRequest();
+        const startTime = Date.now();
+        
+        // Track upload progress
+        xhr.upload.addEventListener('progress', (e) => {
+          if (e.lengthComputable && onProgress) {
+            onProgress(e.loaded, e.total, startTime);
+          }
+        });
+        
+        // Handle completion
+        xhr.addEventListener('load', () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            // Get public URL
+            const publicUrl = `${supabaseUrl}/storage/v1/object/public/${this.bucketName}/${filePath}`;
+            resolve({
+              path: filePath,
+              publicUrl: publicUrl
+            });
+          } else {
+            reject(new Error(`Upload failed with status ${xhr.status}: ${xhr.statusText}`));
+          }
+        });
+        
+        // Handle errors
+        xhr.addEventListener('error', () => {
+          reject(new Error('Upload failed due to network error'));
+        });
+        
+        xhr.addEventListener('abort', () => {
+          reject(new Error('Upload was aborted'));
+        });
+        
+        // Configure request
+        xhr.open('POST', uploadUrl);
+        xhr.setRequestHeader('Authorization', `Bearer ${supabaseKey}`);
+        xhr.setRequestHeader('Content-Type', file.type);
+        xhr.setRequestHeader('Cache-Control', '3600');
+        
+        // Send file
+        xhr.send(file);
+        
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
   // Save submission to database
   async saveSubmission(submissionData) {
     try {

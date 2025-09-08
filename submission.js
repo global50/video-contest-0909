@@ -98,6 +98,67 @@ export function initializeSubmissionForm(userParams = {}) {
     cleanFileUploadArea.style.display = 'block';
   });
 
+  // Create and show upload progress
+  function showUploadProgress() {
+    const progressContainer = document.createElement('div');
+    progressContainer.className = 'upload-progress-container';
+    progressContainer.innerHTML = `
+      <div class="upload-progress-header">
+        <span class="upload-status">Uploading video...</span>
+        <span class="upload-percentage">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 0%"></div>
+      </div>
+      <div class="upload-details">
+        <span class="upload-speed">0 MB/s</span>
+        <span class="upload-eta">Calculating...</span>
+      </div>
+    `;
+    
+    // Insert progress container after the form
+    cleanForm.parentNode.insertBefore(progressContainer, cleanForm.nextSibling);
+    return progressContainer;
+  }
+
+  // Update upload progress
+  function updateUploadProgress(progressContainer, loaded, total, startTime) {
+    const percentage = Math.round((loaded / total) * 100);
+    const elapsed = (Date.now() - startTime) / 1000; // seconds
+    const speed = loaded / elapsed; // bytes per second
+    const remaining = total - loaded;
+    const eta = remaining / speed; // seconds remaining
+    
+    // Update progress bar
+    const progressFill = progressContainer.querySelector('.progress-fill');
+    const percentageSpan = progressContainer.querySelector('.upload-percentage');
+    const speedSpan = progressContainer.querySelector('.upload-speed');
+    const etaSpan = progressContainer.querySelector('.upload-eta');
+    
+    progressFill.style.width = `${percentage}%`;
+    percentageSpan.textContent = `${percentage}%`;
+    
+    // Format speed
+    const speedMB = speed / (1024 * 1024);
+    speedSpan.textContent = `${speedMB.toFixed(1)} MB/s`;
+    
+    // Format ETA
+    if (eta > 0 && eta < Infinity) {
+      const minutes = Math.floor(eta / 60);
+      const seconds = Math.floor(eta % 60);
+      etaSpan.textContent = minutes > 0 ? `${minutes}m ${seconds}s remaining` : `${seconds}s remaining`;
+    } else {
+      etaSpan.textContent = 'Calculating...';
+    }
+  }
+
+  // Hide upload progress
+  function hideUploadProgress() {
+    const progressContainer = document.querySelector('.upload-progress-container');
+    if (progressContainer) {
+      progressContainer.remove();
+    }
+  }
   // Form submission handler
   cleanForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -109,10 +170,11 @@ export function initializeSubmissionForm(userParams = {}) {
 
     const submitBtn = cleanForm.querySelector('.submit-btn');
     const originalText = submitBtn.textContent;
+    let progressContainer = null;
     
     try {
       // Show loading state
-      submitBtn.textContent = 'Uploading...';
+      submitBtn.textContent = 'Preparing upload...';
       submitBtn.disabled = true;
 
       // Get form data
@@ -124,9 +186,21 @@ export function initializeSubmissionForm(userParams = {}) {
         throw new Error('Please enter a video title.');
       }
 
-      // Upload video to Supabase Storage
-      submitBtn.textContent = 'Uploading video...';
-      const uploadResult = await videoStorage.uploadVideo(selectedFile);
+      // Show upload progress
+      progressContainer = showUploadProgress();
+      submitBtn.textContent = 'Uploading...';
+
+      // Upload video with progress tracking
+      const uploadResult = await videoStorage.uploadVideoWithProgress(
+        selectedFile,
+        (loaded, total, startTime) => {
+          updateUploadProgress(progressContainer, loaded, total, startTime);
+        }
+      );
+
+      // Update progress to show completion
+      const statusSpan = progressContainer.querySelector('.upload-status');
+      statusSpan.textContent = 'Upload complete! Saving submission...';
 
       // Prepare submission data for edge function
       const submissionData = {
@@ -157,6 +231,9 @@ export function initializeSubmissionForm(userParams = {}) {
         throw new Error(result.error || 'Failed to submit video');
       }
 
+      // Hide progress and show success
+      hideUploadProgress();
+
       // Show success modal
       showSuccessModal();
 
@@ -166,6 +243,7 @@ export function initializeSubmissionForm(userParams = {}) {
       
     } catch (error) {
       console.error('Submission error:', error);
+      hideUploadProgress();
       alert(error.message || 'Failed to submit video. Please try again.');
     } finally {
       // Reset button state

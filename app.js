@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
       <main>
         <form id="submissionForm" class="submission-form">
           <div class="form-group">
-            <label for="videoTitle">What is your video called?</label>
+            <label for="videoTitle">Как называется ваша короткометражка?</label>
             <input 
               type="text" 
               id="videoTitle" 

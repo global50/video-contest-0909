@@ -144,6 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <table id="submissionsTable">
               <thead>
                 <tr>
+                  <th>#</th>
                   <th>Title</th>
                   <th>Video</th>
                   <th>Name</th>
@@ -151,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
                   <th>Submitted</th>
                 </tr>
               </thead>
-              <tbody id="submissionsTableBody">
+                  <td colspan="4" class="empty-state">
                 <tr id="emptyState">
                   <td colspan="5" class="empty-state">
                     <div class="empty-icon">📹</div>

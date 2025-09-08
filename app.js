@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
                   <th>Название</th>
                   <th>Видео</th>
                   <!-- <th>Имя</th> -->
-                  <th>Группа</th>
+                  <th>В группе</th>
                   <th>Дата</th>
                 </tr>
               </thead>

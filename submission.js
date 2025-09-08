@@ -200,7 +200,7 @@ export function initializeSubmissionForm(userParams = {}) {
 
       // Update progress to show completion
       const statusSpan = progressContainer.querySelector('.upload-status');
-      statusSpan.textContent = 'Upload complete! Saving submission...';
+      statusSpan.textContent = 'Загружено. Сохраняем...';
 
       // Prepare submission data for edge function
       const submissionData = {

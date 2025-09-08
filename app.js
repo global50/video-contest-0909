@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="card-grid">
           <div class="feature-card">
             <div class="card-icon">📝</div>
-            <h2>Submit Your Video</h2>
+            <h2>Отправить видео</h2>
             <p>Upload your contest entry with team details and video file</p>
             <button onclick="router.navigate('/submit')" class="btn btn-primary">Go to Submission Form</button>
           </div>

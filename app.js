@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="card-grid">
           <div class="feature-card">
             <div class="card-icon">📝</div>
-            <h2>Отправить видео</h2>
+            <h2>Заявка</h2>
             <p>Загрузить заявку с проектом и видео</p>
             <button onclick="router.navigate('/submit')" class="btn btn-primary">Открыть форму</button>
           </div>

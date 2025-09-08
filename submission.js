@@ -164,7 +164,7 @@ export function initializeSubmissionForm(userParams = {}) {
     e.preventDefault();
     
     if (!selectedFile) {
-      alert('Please select a video file.');
+      alert('Выберите видео файл.');
       return;
     }
 

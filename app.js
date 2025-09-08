@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
           
           <div class="feature-card">
             <div class="card-icon">📊</div>
-            <h2>Manager Dashboard</h2>
+            <h2>Дашборд</h2>
             <p>View all contest submissions and manage entries</p>
             <button onclick="router.navigate('/manager')" class="btn btn-secondary">View Dashboard</button>
           </div>

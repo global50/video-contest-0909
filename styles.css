@@ -516,6 +516,17 @@ tr:hover {
   margin-bottom: 2rem;
 }
 
+.team-count {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.row-number {
+  font-weight: 600;
+  color: var(--gray-500);
+  font-size: 0.875rem;
+}
+
 /* Modal Styles */
 .modal {
   position: fixed;

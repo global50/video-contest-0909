@@ -144,8 +144,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 <tr>
                   <th>Title</th>
                   <th>Video</th>
-                  <th>Name</th>
                   <th>Team Size</th>
+                  <th>Name</th>
                   <th>Submitted</th>
                 </tr>
               </thead>

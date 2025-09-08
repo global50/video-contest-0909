@@ -64,7 +64,7 @@ export function initializeDashboard() {
       // Show error state
       submissionsTableBody.innerHTML = `
         <tr>
-          <td colspan="5" class="empty-state">
+          <td colspan="4" class="empty-state">
             <div class="empty-icon">⚠️</div>
             <p>Error loading submissions</p>
             <button onclick="location.reload()" class="btn btn-primary">Retry</button>
@@ -84,26 +84,6 @@ export function initializeDashboard() {
   function createSubmissionRow(submission) {
     const row = document.createElement('tr');
     
-    // Format name display
-    let nameDisplay = '';
-    if (submission.contest_users && submission.contest_users.length > 0) {
-      const user = submission.contest_users[0];
-      if (user.full_name || user.username) {
-        if (user.full_name) {
-          nameDisplay = user.full_name;
-          if (user.username) {
-            nameDisplay += ` @${user.username}`;
-          }
-        } else if (user.username) {
-          nameDisplay = `@${user.username}`;
-        }
-      } else {
-        nameDisplay = '-';
-      }
-    } else {
-      nameDisplay = '-';
-    }
-    
     row.innerHTML = `
       <td>
         <div class="submission-title">${escapeHtml(submission.video_title || 'Untitled')}</div>
@@ -114,9 +94,6 @@ export function initializeDashboard() {
             <path d="M8 5v14l11-7z"/>
           </svg>
         </button>
-      </td>
-      <td>
-        <div class="submission-name">${escapeHtml(nameDisplay)}</div>
       </td>
       <td>
         <span class="team-count">${submission.team_count || 1}</span>

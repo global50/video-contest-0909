@@ -1,3 +1,5 @@
+import { initializeSubmissionForm } from './submission.js';
+
 // Main application logic and route handlers
 document.addEventListener('DOMContentLoaded', function() {
   const app = document.getElementById('app');

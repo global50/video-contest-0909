@@ -1,5 +1,5 @@
 // Submission form functionality - now called by router
-function initializeSubmissionForm(userParams = {}) {
+export function initializeSubmissionForm(userParams = {}) {
   const form = document.getElementById('submissionForm');
   if (!form) return; // Exit if form not found
   

@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function() {
                   <td colspan="5" class="empty-state">
                     <div class="empty-icon">📹</div>
                     <p>Заявок нет</p>
-                    <button onclick="router.navigate('/submit')" class="btn btn-primary">Add First Submission</button>
+                    <button onclick="router.navigate('/submit')" class="btn btn-primary">Подать первую заявку</button>
                   </td>
                 </tr>
               </tbody>

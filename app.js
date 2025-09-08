@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
                   <line x1="12" y1="15" x2="12" y2="3"></line>
                 </svg>
               </div>
-              <p>Click to upload or drag and drop your video here</p>
+              <p>Нажмите на кнопку или перетащите видео сюда</p>
               <p class="file-info">Upload original file without compression. MP4, AVI, MOV</p>
               <input type="file" id="videoFile" name="videoFile" accept="video/*" required hidden>
               <button type="button" class="btn btn-outline" id="selectFileBtn">Select File</button>

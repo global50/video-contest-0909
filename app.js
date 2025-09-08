@@ -18,8 +18,8 @@ document.addEventListener('DOMContentLoaded', function() {
   function renderHome() {
     app.innerHTML = `
       <header>
-        <h1>Video Contest Platform</h1>
-        <p>Welcome to the video contest submission and management system</p>
+        <h1>Конкурс короткометражек</h1>
+        <!-- <p>Welcome to the video contest submission and management system</p> -->
       </header>
       
       <main class="main-content">

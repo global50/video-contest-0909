@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
               type="text" 
               id="videoTitle" 
               name="videoTitle" 
-              placeholder="Enter video title"
+              placeholder="Название видео"
               required
             >
           </div>

@@ -138,39 +138,22 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="submissions-section">
           <div class="section-header">
             <h2>Submitted Videos</h2>
-            <div class="table-controls">
-              <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Search by title or name..." class="search-input">
-                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <path d="m21 21-4.35-4.35"></path>
-                </svg>
-              </div>
           </div>
           
           <div class="table-container">
             <table id="submissionsTable">
               <thead>
                 <tr>
-                  <th class="sortable" data-column="video_title">
-                    Title
-                    <span class="sort-indicator"></span>
-                  </th>
+                  <th>Title</th>
                   <th>Video</th>
                   <th>Name</th>
-                  <th class="sortable" data-column="name">
-                    Name
-                    <span class="sort-indicator"></span>
-                  </th>
-                  <th class="sortable" data-column="created_at">
-                    Submitted
-                    <span class="sort-indicator"></span>
-                  </th>
+                  <th>Team Size</th>
+                  <th>Submitted</th>
                 </tr>
               </thead>
               <tbody id="submissionsTableBody">
                 <tr id="emptyState">
-                  <td colspan="4" class="empty-state">
+                  <td colspan="5" class="empty-state">
                     <div class="empty-icon">📹</div>
                     <p>No submissions yet</p>
                     <button onclick="router.navigate('/submit')" class="btn btn-primary">Add First Submission</button>

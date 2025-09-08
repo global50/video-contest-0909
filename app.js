@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function renderManager() {
     app.innerHTML = `
       <header>
-        <h1>Contest Participants</h1>
+        <h2>Contest Participants</h1>
       </header>
       
       <main>

@@ -136,7 +136,6 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="submissions-section">
           <div class="section-header">
             <h2>Submitted Videos</h2>
-            <button id="clearAllBtn" class="btn btn-outline btn-danger">Clear All Submissions</button>
           </div>
           
           <div class="table-container">
@@ -144,10 +143,10 @@ document.addEventListener('DOMContentLoaded', function() {
               <thead>
                 <tr>
                   <th>Title</th>
+                  <th>Video</th>
+                  <th>Name</th>
                   <th>Team Size</th>
                   <th>Submitted</th>
-                  <th>Video</th>
-                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody id="submissionsTableBody">

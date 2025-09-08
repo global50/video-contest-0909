@@ -6,7 +6,6 @@ function initializeDashboard() {
   const emptyState = document.getElementById('emptyState');
   const totalSubmissionsEl = document.getElementById('totalSubmissions');
   const totalParticipantsEl = document.getElementById('totalParticipants');
-  const clearAllBtn = document.getElementById('clearAllBtn');
   const videoModal = document.getElementById('videoModal');
   const modalVideo = document.getElementById('modalVideo');
   const videoModalTitle = document.getElementById('videoModalTitle');
@@ -14,25 +13,6 @@ function initializeDashboard() {
 
   // Load dashboard data
   loadDashboard();
-
-  // Clear all submissions handler
-  clearAllBtn.addEventListener('click', async () => {
-    if (confirm('Are you sure you want to delete all submissions? This action cannot be undone.')) {
-      try {
-        clearAllBtn.textContent = 'Deleting...';
-        clearAllBtn.disabled = true;
-        
-        await videoStorage.clearAllSubmissions();
-        await loadDashboard();
-      } catch (error) {
-        console.error('Error clearing submissions:', error);
-        alert('Failed to clear submissions. Please try again.');
-      } finally {
-        clearAllBtn.textContent = 'Clear All Submissions';
-        clearAllBtn.disabled = false;
-      }
-    }
-  });
 
   // Close video modal handlers
   closeVideoModal.addEventListener('click', closeModal);
@@ -101,21 +81,25 @@ function initializeDashboard() {
   // Create a table row for a submission
   function createSubmissionRow(submission) {
     const row = document.createElement('tr');
-    const fileName = videoStorage.getFileNameFromUrl(submission.video_url);
+    
+    // Format name display
+    let nameDisplay = '';
+    if (submission.full_name || submission.username) {
+      if (submission.full_name) {
+        nameDisplay = submission.full_name;
+        if (submission.username) {
+          nameDisplay += ` @${submission.username}`;
+        }
+      } else if (submission.username) {
+        nameDisplay = `@${submission.username}`;
+      }
+    } else {
+      nameDisplay = '-';
+    }
     
     row.innerHTML = `
       <td>
         <div class="submission-title">${escapeHtml(submission.video_title || 'Untitled')}</div>
-        ${submission.full_name ? `<div class="submission-author" style="font-size: 0.875rem; color: var(--gray-500);">by ${escapeHtml(submission.full_name)}</div>` : ''}
-      </td>
-      <td>
-        <span class="team-count">${submission.team_count || 1} ${(submission.team_count || 1) === 1 ? 'person' : 'people'}</span>
-      </td>
-      <td>
-        <div class="submission-date">${videoStorage.formatDate(submission.created_at)}</div>
-        <div class="file-info" style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">
-          ${escapeHtml(fileName)}
-        </div>
       </td>
       <td>
         <button class="play-btn" onclick="playVideo('${submission.id}')" title="Play video">
@@ -125,9 +109,13 @@ function initializeDashboard() {
         </button>
       </td>
       <td>
-        <button class="delete-btn" onclick="deleteSubmission('${submission.id}')" title="Delete submission">
-          Delete
-        </button>
+        <div class="submission-name">${escapeHtml(nameDisplay)}</div>
+      </td>
+      <td>
+        <span class="team-count">${submission.team_count || 1}</span>
+      </td>
+      <td>
+        <div class="submission-date">${videoStorage.formatDate(submission.created_at)}</div>
       </td>
     `;
     return row;
@@ -152,35 +140,6 @@ function initializeDashboard() {
     } catch (error) {
       console.error('Error playing video:', error);
       alert('Failed to load video');
-    }
-  };
-
-  // Delete submission
-  window.deleteSubmission = async function(submissionId) {
-    try {
-      const submissions = await videoStorage.getAllSubmissions();
-      const submission = submissions.find(s => s.id == submissionId);
-      
-      if (submission && confirm(`Are you sure you want to delete "${submission.video_title || 'this submission'}"?`)) {
-        // Find and disable the delete button
-        const deleteBtn = document.querySelector(`button[onclick="deleteSubmission('${submissionId}')"]`);
-        if (deleteBtn) {
-          deleteBtn.textContent = 'Deleting...';
-          deleteBtn.disabled = true;
-        }
-        
-        await videoStorage.deleteSubmission(submissionId);
-        await loadDashboard();
-      }
-    } catch (error) {
-      console.error('Error deleting submission:', error);
-      alert('Failed to delete submission. Please try again.');
-      // Re-enable button on error
-      const deleteBtn = document.querySelector(`button[onclick="deleteSubmission('${submissionId}')"]`);
-      if (deleteBtn) {
-        deleteBtn.textContent = 'Delete';
-        deleteBtn.disabled = false;
-      }
     }
   };
 

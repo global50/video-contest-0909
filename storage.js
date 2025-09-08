@@ -215,7 +215,7 @@ class VideoContestStorage {
   // Format date for display
   formatDate(dateString) {
     const date = new Date(dateString);
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false});
   }
 
   // Extract filename from URL

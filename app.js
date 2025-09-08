@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
           </div>
           
-          <button type="submit" class="btn btn-primary submit-btn">Submit Entry</button>
+          <button type="submit" class="btn btn-primary submit-btn">Отправить</button>
         </form>
       </main>
     `;

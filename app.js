@@ -144,18 +144,18 @@ document.addEventListener('DOMContentLoaded', function() {
             <table id="submissionsTable">
               <thead>
                 <tr>
-                  <th>Title</th>
-                  <th>Video</th>
-                  <th>Name</th>
-                  <th>Team Size</th>
-                  <th>Submitted</th>
+                  <th>Название</th>
+                  <th>Видео</th>
+                  <th>Имя</th>
+                  <th>Группа</th>
+                  <th>Дата</th>
                 </tr>
               </thead>
               <tbody id="submissionsTableBody">
                 <tr id="emptyState">
                   <td colspan="5" class="empty-state">
                     <div class="empty-icon">📹</div>
-                    <p>No submissions yet</p>
+                    <p>Заявок нет</p>
                     <button onclick="router.navigate('/submit')" class="btn btn-primary">Add First Submission</button>
                   </td>
                 </tr>

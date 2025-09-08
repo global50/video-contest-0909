@@ -54,8 +54,8 @@ export function initializeDashboard() {
         submissionsTableBody.appendChild(emptyState);
       } else {
         // Hide empty state and populate table
-        submissions.forEach((submission, index) => {
-          const row = createSubmissionRow(submission, index);
+        submissions.forEach(submission => {
+          const row = createSubmissionRow(submission);
           submissionsTableBody.appendChild(row);
         });
       }
@@ -64,7 +64,7 @@ export function initializeDashboard() {
       // Show error state
       submissionsTableBody.innerHTML = `
         <tr>
-          <td colspan="4" class="empty-state">
+          <td colspan="5" class="empty-state">
             <div class="empty-icon">⚠️</div>
             <p>Error loading submissions</p>
             <button onclick="location.reload()" class="btn btn-primary">Retry</button>
@@ -81,7 +81,7 @@ export function initializeDashboard() {
   }
 
   // Create a table row for a submission
-  function createSubmissionRow(submission, index) {
+  function createSubmissionRow(submission) {
     const row = document.createElement('tr');
     
     // Format name display
@@ -100,9 +100,6 @@ export function initializeDashboard() {
     }
     
     row.innerHTML = `
-      <td>
-        <span class="row-number">${index + 1}</span>
-      </td>
       <td>
         <div class="submission-title">${escapeHtml(submission.video_title || 'Untitled')}</div>
       </td>

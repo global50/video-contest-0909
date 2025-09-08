@@ -146,14 +146,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 <tr>
                   <th>Название</th>
                   <th>Видео</th>
-                  <th>Имя</th>
-                  <th>Группа</th>
+                  <th>В группе</th>
                   <th>Дата</th>
                 </tr>
               </thead>
               <tbody id="submissionsTableBody">
                 <!-- <tr id="emptyState">
-                  <td colspan="5" class="empty-state">
+                  <td colspan="4" class="empty-state">
                     <div class="empty-icon">📹</div>
                     <p>Заявок нет</p>
                     <button onclick="router.navigate('/submit')" class="btn btn-primary">Подать первую заявку</button>

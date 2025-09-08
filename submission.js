@@ -148,7 +148,7 @@ export function initializeSubmissionForm(userParams = {}) {
       const seconds = Math.floor(eta % 60);
       etaSpan.textContent = minutes > 0 ? `${minutes}m ${seconds}s remaining` : `${seconds}s remaining`;
     } else {
-      etaSpan.textContent = 'Calculating...';
+      etaSpan.textContent = 'Считаем...';
     }
   }
 

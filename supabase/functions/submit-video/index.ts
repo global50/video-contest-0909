@@ -4,11 +4,6 @@ interface SubmissionData {
   video_title: string;
   team_count: number;
   video_url: string;
-  full_name?: string;
-  username?: string;
-  tg_id?: string;
-  full_name?: string;
-  username?: string;
   tg_id?: string;
 }
 

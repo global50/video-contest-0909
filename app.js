@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="dashboard-stats">
           <div class="stat-card">
             <div class="stat-number" id="totalSubmissions">0</div>
-            <div class="stat-label">Total Submissions</div>
+            <div class="stat-label">Всего заявок</div>
           </div>
           <div class="stat-card">
             <div class="stat-number" id="totalParticipants">0</div>

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Submission - Video Contest</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <nav>
+          <a href="index.html" class="nav-link">← Back to Home</a>
+          <a href="dashboard.html" class="nav-link">View Dashboard</a>
+        </nav>
+        <h1>Video Contest Submission</h1>
+      </header>
+      
+      <main>
+        <form id="submissionForm" class="submission-form">
+          <div class="form-group">
+            <label for="videoTitle">What is your video called?</label>
+            <input 
+              type="text" 
+              id="videoTitle" 
+              name="videoTitle" 
+              placeholder="Enter video title"
+              required
+            >
+          </div>
+          
+          <div class="form-group">
+            <label for="teamCount">How many people were in your team?</label>
+            <input 
+              type="number" 
+              id="teamCount" 
+              name="teamCount" 
+              min="1" 
+              max="100" 
+              value="1"
+              required
+            >
+          </div>
+          
+          <div class="form-group">
+            <label>Video File</label>
+            <div class="file-upload-area" id="fileUploadArea">
+              <div class="upload-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7,10 12,15 17,10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+              </div>
+              <p>Click to upload or drag and drop your video here</p>
+              <p class="file-info">Upload original file without compression. MP4, AVI, MOV</p>
+              <input type="file" id="videoFile" name="videoFile" accept="video/*" required hidden>
+              <button type="button" class="btn btn-outline" id="selectFileBtn">Select File</button>
+            </div>
+            <div id="filePreview" class="file-preview" style="display: none;">
+              <div class="preview-info">
+                <span class="file-name"></span>
+                <span class="file-size"></span>
+                <button type="button" class="remove-file" id="removeFile">×</button>
+              </div>
+            </div>
+          </div>
+          
+          <button type="submit" class="btn btn-primary submit-btn">Submit Entry</button>
+        </form>
+      </main>
+    </div>
+    
+    <div id="successModal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <h3>Submission Successful!</h3>
+        <p>Your video has been submitted to the contest.</p>
+        <div class="modal-actions">
+          <a href="submission.html" class="btn btn-outline">Submit Another</a>
+          <a href="dashboard.html" class="btn btn-primary">View Dashboard</a>
+        </div>
+      </div>
+    </div>
+    
+    <script src="storage.js"></script>
+    <script src="submission.js"></script>
+  </body>
+</html>

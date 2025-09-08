@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
               id="teamCount" 
               name="teamCount" 
               min="1" 
-              max="100" 
+              max="1000" 
               value="1"
               required
             >

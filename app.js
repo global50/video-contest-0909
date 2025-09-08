@@ -124,12 +124,20 @@ document.addEventListener('DOMContentLoaded', function() {
       </header>
       
       <main>
+        <div class="dashboard-stats">
+          <div class="stat-card">
+            <div class="stat-number" id="totalSubmissions">0</div>
+            <div class="stat-label">Total Submissions</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="totalParticipants">0</div>
+            <div class="stat-label">Total Participants</div>
+          </div>
+        </div>
+        
         <div class="submissions-section">
           <div class="section-header">
             <h2>Submitted Videos</h2>
-            <div class="submissions-count">
-              <span id="totalSubmissions">0</span> submissions
-            </div>
           </div>
           
           <div class="table-container">

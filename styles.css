@@ -350,23 +350,6 @@ nav {
   color: var(--gray-900);
 }
 
-.submissions-count {
-  font-size: 0.875rem;
-  color: var(--gray-600);
-  font-weight: 500;
-}
-
-.submissions-count span {
-  font-weight: 700;
-  color: var(--primary-color);
-}
-
-.video-status {
-  color: var(--success-color);
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
 .table-container {
   overflow-x: auto;
 }

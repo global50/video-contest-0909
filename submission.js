@@ -5,6 +5,9 @@ export function initializeSubmissionForm(userParams = {}) {
   const form = document.getElementById('submissionForm');
   if (!form) return; // Exit if form not found
   
+  // Store tg_id from URL parameters
+  const currentTgId = userParams.tg_id || null;
+  
   const fileUploadArea = document.getElementById('fileUploadArea');
   const videoFileInput = document.getElementById('videoFile');
   const selectFileBtn = document.getElementById('selectFileBtn');
@@ -207,7 +210,7 @@ export function initializeSubmissionForm(userParams = {}) {
         video_title: videoTitle,
         team_count: parseInt(teamCount),
         video_url: uploadResult.publicUrl,
-        tg_id: null // Will be set by third-party system
+        tg_id: currentTgId // Save tg_id from URL parameters
       };
 
       // Call edge function

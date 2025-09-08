@@ -213,7 +213,7 @@ export function initializeSubmissionForm(userParams = {}) {
       };
 
       // Call edge function
-      submitBtn.textContent = 'Saving submission...';
+      submitBtn.textContent = 'Сохраняем...';
       const apiUrl = `${window.VITE_SUPABASE_URL}/functions/v1/submit-video`;
       
       const response = await fetch(apiUrl, {

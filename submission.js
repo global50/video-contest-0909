@@ -188,7 +188,7 @@ export function initializeSubmissionForm(userParams = {}) {
 
       // Show upload progress
       progressContainer = showUploadProgress();
-      submitBtn.textContent = 'Uploading...';
+      submitBtn.textContent = 'Загрузка...';
 
       // Upload video with progress tracking
       const uploadResult = await videoStorage.uploadVideoWithProgress(

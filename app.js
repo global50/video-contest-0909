@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
           </div>
           
           <div class="form-group">
-            <label for="teamCount">How many people were in your team?</label>
+            <label for="teamCount">Сколько человек было в съемочной группе?</label>
             <input 
               type="number" 
               id="teamCount" 

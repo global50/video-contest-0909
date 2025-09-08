@@ -174,7 +174,7 @@ export function initializeSubmissionForm(userParams = {}) {
     
     try {
       // Show loading state
-      submitBtn.textContent = 'Preparing upload...';
+      submitBtn.textContent = 'Подготовка...';
       submitBtn.disabled = true;
 
       // Get form data

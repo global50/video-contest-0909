@@ -151,15 +151,15 @@ document.addEventListener('DOMContentLoaded', function() {
                   <th>Дата</th>
                 </tr>
               </thead>
-              <!-- <tbody id="submissionsTableBody">
-                <tr id="emptyState">
+              <tbody id="submissionsTableBody">
+                <!-- <tr id="emptyState">
                   <td colspan="5" class="empty-state">
                     <div class="empty-icon">📹</div>
                     <p>Заявок нет</p>
                     <button onclick="router.navigate('/submit')" class="btn btn-primary">Подать первую заявку</button>
                   </td>
-                </tr>
-              </tbody> -->
+                </tr> -->
+              </tbody>
             </table>
           </div>
         </div>

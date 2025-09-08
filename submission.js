@@ -64,7 +64,7 @@ export function initializeSubmissionForm(userParams = {}) {
         cleanVideoFileInput.files = files;
         handleFileSelect();
       } else {
-        alert('Please select a valid video file.');
+        alert('Выберите видео файл.');
       }
     }
   });

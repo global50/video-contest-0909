@@ -7,14 +7,41 @@ export function initializeDashboard() {
   
   const emptyState = document.getElementById('emptyState');
   const totalSubmissionsEl = document.getElementById('totalSubmissions');
-  const totalParticipantsEl = document.getElementById('totalParticipants');
+  const searchInput = document.getElementById('searchInput');
   const videoModal = document.getElementById('videoModal');
   const modalVideo = document.getElementById('modalVideo');
   const videoModalTitle = document.getElementById('videoModalTitle');
   const closeVideoModal = document.getElementById('closeVideoModal');
 
+  // State for sorting and filtering
+  let allSubmissions = [];
+  let filteredSubmissions = [];
+  let currentSort = { column: 'created_at', direction: 'desc' };
+
   // Load dashboard data
   loadDashboard();
+
+  // Search functionality
+  searchInput.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase().trim();
+    filterAndDisplaySubmissions(searchTerm);
+  });
+
+  // Sorting functionality
+  document.querySelectorAll('.sortable').forEach(header => {
+    header.addEventListener('click', () => {
+      const column = header.dataset.column;
+      if (currentSort.column === column) {
+        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+      } else {
+        currentSort.column = column;
+        currentSort.direction = 'asc';
+      }
+      updateSortIndicators();
+      const searchTerm = searchInput.value.toLowerCase().trim();
+      filterAndDisplaySubmissions(searchTerm);
+    });
+  });
 
   // Close video modal handlers
   closeVideoModal.addEventListener('click', closeModal);
@@ -38,33 +65,25 @@ export function initializeDashboard() {
   // Load and display dashboard data
   async function loadDashboard() {
     try {
-      const [submissions, stats] = await Promise.all([
+      const [submissions] = await Promise.all([
         videoStorage.getAllSubmissions(),
-        videoStorage.getStats()
       ]);
       
+      allSubmissions = submissions;
+      
       // Update statistics
-      updateStats(stats);
+      updateStats({ totalSubmissions: submissions.length });
       
-      // Clear current table content
-      submissionsTableBody.innerHTML = '';
+      // Filter and display submissions
+      const searchTerm = searchInput.value.toLowerCase().trim();
+      filterAndDisplaySubmissions(searchTerm);
       
-      if (submissions.length === 0) {
-        // Show empty state
-        submissionsTableBody.appendChild(emptyState);
-      } else {
-        // Hide empty state and populate table
-        submissions.forEach(submission => {
-          const row = createSubmissionRow(submission);
-          submissionsTableBody.appendChild(row);
-        });
-      }
     } catch (error) {
       console.error('Error loading dashboard:', error);
       // Show error state
       submissionsTableBody.innerHTML = `
         <tr>
-          <td colspan="5" class="empty-state">
+          <td colspan="4" class="empty-state">
             <div class="empty-icon">⚠️</div>
             <p>Error loading submissions</p>
             <button onclick="location.reload()" class="btn btn-primary">Retry</button>
@@ -74,17 +93,101 @@ export function initializeDashboard() {
     }
   }
 
-  // Update statistics display
-  function updateStats(stats) {
-    totalSubmissionsEl.textContent = stats.totalSubmissions;
-    totalParticipantsEl.textContent = stats.totalParticipants;
+  // Filter and display submissions
+  function filterAndDisplaySubmissions(searchTerm) {
+    // Filter submissions
+    if (searchTerm) {
+      filteredSubmissions = allSubmissions.filter(submission => {
+        const title = (submission.video_title || '').toLowerCase();
+        const name = getDisplayName(submission).toLowerCase();
+        return title.includes(searchTerm) || name.includes(searchTerm);
+      });
+    } else {
+      filteredSubmissions = [...allSubmissions];
+    }
+
+    // Sort submissions
+    sortSubmissions(filteredSubmissions);
+
+    // Display submissions
+    displaySubmissions(filteredSubmissions);
   }
 
-  // Create a table row for a submission
-  function createSubmissionRow(submission) {
-    const row = document.createElement('tr');
+  // Sort submissions
+  function sortSubmissions(submissions) {
+    submissions.sort((a, b) => {
+      let aValue, bValue;
+
+      switch (currentSort.column) {
+        case 'video_title':
+          aValue = (a.video_title || '').toLowerCase();
+          bValue = (b.video_title || '').toLowerCase();
+          break;
+        case 'name':
+          aValue = getDisplayName(a).toLowerCase();
+          bValue = getDisplayName(b).toLowerCase();
+          break;
+        case 'created_at':
+          aValue = new Date(a.created_at);
+          bValue = new Date(b.created_at);
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) {
+        return currentSort.direction === 'asc' ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return currentSort.direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  }
+
+  // Display submissions in table
+  function displaySubmissions(submissions) {
+    // Clear current table content
+    submissionsTableBody.innerHTML = '';
     
-    // Format name display
+    if (submissions.length === 0) {
+      // Show empty state
+      const emptyRow = document.createElement('tr');
+      emptyRow.innerHTML = `
+        <td colspan="4" class="empty-state">
+          <div class="empty-icon">📹</div>
+          <p>${allSubmissions.length === 0 ? 'No submissions yet' : 'No submissions match your search'}</p>
+          ${allSubmissions.length === 0 ? '<button onclick="router.navigate(\'/submit\')" class="btn btn-primary">Add First Submission</button>' : ''}
+        </td>
+      `;
+      submissionsTableBody.appendChild(emptyRow);
+    } else {
+      // Populate table with submissions
+      submissions.forEach(submission => {
+        const row = createSubmissionRow(submission);
+        submissionsTableBody.appendChild(row);
+      });
+    }
+  }
+
+  // Update sort indicators
+  function updateSortIndicators() {
+    document.querySelectorAll('.sortable').forEach(header => {
+      const indicator = header.querySelector('.sort-indicator');
+      const column = header.dataset.column;
+      
+      if (column === currentSort.column) {
+        indicator.textContent = currentSort.direction === 'asc' ? '↑' : '↓';
+        header.classList.add('sorted');
+      } else {
+        indicator.textContent = '';
+        header.classList.remove('sorted');
+      }
+    });
+  }
+
+  // Get display name for a submission
+  function getDisplayName(submission) {
     let nameDisplay = '';
     if (submission.full_name || submission.username) {
       if (submission.full_name) {
@@ -98,6 +201,19 @@ export function initializeDashboard() {
     } else {
       nameDisplay = '-';
     }
+    return nameDisplay;
+  }
+
+  // Update statistics display
+  function updateStats(stats) {
+    totalSubmissionsEl.textContent = stats.totalSubmissions;
+  }
+
+  // Create a table row for a submission
+  function createSubmissionRow(submission) {
+    const row = document.createElement('tr');
+    
+    const nameDisplay = getDisplayName(submission);
     
     row.innerHTML = `
       <td>
@@ -109,6 +225,9 @@ export function initializeDashboard() {
             <path d="M8 5v14l11-7z"/>
           </svg>
         </button>
+      </td>
+      <td>
+        <div class="submission-name">${escapeHtml(nameDisplay)}</div>
       </td>
       <td>
         <div class="submission-name">${escapeHtml(nameDisplay)}</div>
@@ -163,14 +282,16 @@ export function initializeDashboard() {
   setInterval(async () => {
     try {
       const currentSubmissions = await videoStorage.getAllSubmissions();
-      const displayedRows = submissionsTableBody.querySelectorAll('tr:not(#emptyState)').length;
       
       // Only reload if submission count has changed
-      if (currentSubmissions.length !== displayedRows) {
+      if (currentSubmissions.length !== allSubmissions.length) {
         await loadDashboard();
       }
     } catch (error) {
       console.error('Error in auto-refresh:', error);
     }
   }, 30000);
+
+  // Initialize sort indicators
+  updateSortIndicators();
 }

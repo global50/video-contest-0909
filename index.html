@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Video Contest Platform</title>
     <link rel="stylesheet" href="styles.css">
+    <script>
+      // Define environment variables globally for self-hosted deployment
+      window.VITE_SUPABASE_URL = 'https://oakhzkpmqfwodduqaykx.supabase.co';
+      window.VITE_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ha2h6a3BtcWZ3b2RkdXFheWt4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MDI4NzIsImV4cCI6MjA2NjA3ODg3Mn0.lQ_zmT9RXWtgnZrF4OQfYm_r2HMTsQor1UZfsn08HzI';
+    </script>
   </head>
   <body>
     <div class="container">
@@ -45,9 +50,9 @@
     
     <script type="module" src="supabaseClient.js"></script>
     <script type="module" src="storage.js"></script>
-    <script src="router.js"></script>
+    <script type="module" src="router.js"></script>
     <script type="module" src="submission.js"></script>
-    <script src="dashboard.js"></script>
+    <script type="module" src="dashboard.js"></script>
     <script type="module" src="app.js"></script>
   </body>
 </html>

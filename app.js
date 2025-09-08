@@ -1,4 +1,6 @@
 import { initializeSubmissionForm } from './submission.js';
+import { initializeDashboard } from './dashboard.js';
+import { router } from './router.js';
 
 // Main application logic and route handlers
 document.addEventListener('DOMContentLoaded', function() {

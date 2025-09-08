@@ -43,5 +43,8 @@ class Router {
   }
 }
 
-// Create global router instance
-window.router = new Router();
+// Export router instance
+export const router = new Router();
+
+// Also make it globally available for onclick handlers
+window.router = router;

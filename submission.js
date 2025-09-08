@@ -1,4 +1,6 @@
 // Submission form functionality - now called by router
+import { videoStorage } from './storage.js';
+
 export function initializeSubmissionForm(userParams = {}) {
   const form = document.getElementById('submissionForm');
   if (!form) return; // Exit if form not found
@@ -138,12 +140,12 @@ export function initializeSubmissionForm(userParams = {}) {
 
       // Call edge function
       submitBtn.textContent = 'Saving submission...';
-      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/submit-video`;
+      const apiUrl = `${window.VITE_SUPABASE_URL}/functions/v1/submit-video`;
       
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Authorization': `Bearer ${window.VITE_SUPABASE_ANON_KEY}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(submissionData)

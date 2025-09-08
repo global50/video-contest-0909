@@ -1,5 +1,7 @@
 // Dashboard functionality - now called by router
-function initializeDashboard() {
+import { videoStorage } from './storage.js';
+
+export function initializeDashboard() {
   const submissionsTableBody = document.getElementById('submissionsTableBody');
   if (!submissionsTableBody) return; // Exit if elements not found
   

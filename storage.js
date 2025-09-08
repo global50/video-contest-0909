@@ -228,5 +228,5 @@ class VideoContestStorage {
   }
 }
 
-// Create global storage instance
-window.videoStorage = new VideoContestStorage();
+// Export storage instance
+export const videoStorage = new VideoContestStorage();

@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
           </div>
           
           <div class="form-group">
-            <label>Video File</label>
+            <label>Видео файл</label>
             <div class="file-upload-area" id="fileUploadArea">
               <div class="upload-icon">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

@@ -146,14 +146,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 <tr>
                   <th>Title</th>
                   <th>Video</th>
-                  <th>Name</th>
-                  <th>Team Size</th>
                   <th>Submitted</th>
                 </tr>
               </thead>
               <tbody id="submissionsTableBody">
                 <tr id="emptyState">
-                  <td colspan="5" class="empty-state">
+                  <td colspan="3" class="empty-state">
                     <div class="empty-icon">📹</div>
                     <p>No submissions yet</p>
                     <button onclick="router.navigate('/submit')" class="btn btn-primary">Add First Submission</button>

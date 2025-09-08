@@ -183,7 +183,7 @@ export function initializeSubmissionForm(userParams = {}) {
       const teamCount = formData.get('teamCount');
 
       if (!videoTitle) {
-        throw new Error('Please enter a video title.');
+        throw new Error('Напишите название видео.');
       }
 
       // Show upload progress

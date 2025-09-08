@@ -8,9 +8,6 @@ class Router {
     window.addEventListener('popstate', () => {
       this.handleRoute();
     });
-    
-    // Handle initial load
-    this.handleRoute();
   }
 
   // Register a route with its handler

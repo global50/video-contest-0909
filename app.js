@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', function() {
   router.addRoute('/submit', renderSubmit);
   router.addRoute('/manager', renderManager);
 
+  // Handle initial route after all routes are registered
+  router.handleRoute();
+
   // Home page template
   function renderHome() {
     app.innerHTML = `

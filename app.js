@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
           </div>
           <div class="stat-card">
             <div class="stat-number" id="totalParticipants">0</div>
-            <div class="stat-label">Total Participants</div>
+            <div class="stat-label">Участников съемочных групп</div>
           </div>
         </div>
         

@@ -86,14 +86,19 @@ export function initializeDashboard() {
     
     // Format name display
     let nameDisplay = '';
-    if (submission.full_name || submission.username) {
-      if (submission.full_name) {
-        nameDisplay = submission.full_name;
-        if (submission.username) {
-          nameDisplay += ` @${submission.username}`;
+    if (submission.contest_users && submission.contest_users.length > 0) {
+      const user = submission.contest_users[0];
+      if (user.full_name || user.username) {
+        if (user.full_name) {
+          nameDisplay = user.full_name;
+          if (user.username) {
+            nameDisplay += ` @${user.username}`;
+          }
+        } else if (user.username) {
+          nameDisplay = `@${user.username}`;
         }
-      } else if (submission.username) {
-        nameDisplay = `@${submission.username}`;
+      } else {
+        nameDisplay = '-';
       }
     } else {
       nameDisplay = '-';

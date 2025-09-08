@@ -133,7 +133,13 @@ class VideoContestStorage {
     try {
       const { data, error } = await supabase
         .from('video_contest')
-        .select('*')
+        .select(`
+          *,
+          contest_users!inner(
+            full_name,
+            username
+          )
+        `)
         .order('created_at', { ascending: false });
 
       if (error) {

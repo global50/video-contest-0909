@@ -4,6 +4,11 @@ interface SubmissionData {
   video_title: string;
   team_count: number;
   video_url: string;
+  full_name?: string;
+  username?: string;
+  tg_id?: string;
+  full_name?: string;
+  username?: string;
   tg_id?: string;
 }
 
@@ -57,6 +62,8 @@ Deno.serve(async (req: Request) => {
           video_title: submissionData.video_title,
           team_count: submissionData.team_count,
           video_url: submissionData.video_url,
+          full_name: submissionData.full_name || null,
+          username: submissionData.username || null,
           tg_id: submissionData.tg_id || null,
         }
       ])

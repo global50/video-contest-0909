@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
               <p>Нажмите на кнопку или перетащите видео сюда</p>
               <p class="file-info">Загрузите исходный файл без сжатия. MP4, AVI, MOV</p>
               <input type="file" id="videoFile" name="videoFile" accept="video/*" required hidden>
-              <button type="button" class="btn btn-outline" id="selectFileBtn">Select File</button>
+              <button type="button" class="btn btn-outline" id="selectFileBtn">Выбрать файл</button>
             </div>
             <div id="filePreview" class="file-preview" style="display: none;">
               <div class="preview-info">

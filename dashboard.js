@@ -7,7 +7,6 @@ export function initializeDashboard() {
   
   const emptyState = document.getElementById('emptyState');
   const totalSubmissionsEl = document.getElementById('totalSubmissions');
-  const totalParticipantsEl = document.getElementById('totalParticipants');
   const videoModal = document.getElementById('videoModal');
   const modalVideo = document.getElementById('modalVideo');
   const videoModalTitle = document.getElementById('videoModalTitle');
@@ -77,7 +76,6 @@ export function initializeDashboard() {
   // Update statistics display
   function updateStats(stats) {
     totalSubmissionsEl.textContent = stats.totalSubmissions;
-    totalParticipantsEl.textContent = stats.totalParticipants;
   }
 
   // Create a table row for a submission
@@ -104,11 +102,7 @@ export function initializeDashboard() {
         <div class="submission-title">${escapeHtml(submission.video_title || 'Untitled')}</div>
       </td>
       <td>
-        <button class="play-btn" onclick="playVideo('${submission.id}')" title="Play video">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M8 5v14l11-7z"/>
-          </svg>
-        </button>
+        <span class="video-status">✓ Successfully uploaded</span>
       </td>
       <td>
         <div class="submission-name">${escapeHtml(nameDisplay)}</div>

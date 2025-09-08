@@ -1,6 +1,8 @@
-// Submission form functionality
-document.addEventListener('DOMContentLoaded', function() {
+// Submission form functionality - now called by router
+function initializeSubmissionForm() {
   const form = document.getElementById('submissionForm');
+  if (!form) return; // Exit if form not found
+  
   const fileUploadArea = document.getElementById('fileUploadArea');
   const videoFileInput = document.getElementById('videoFile');
   const selectFileBtn = document.getElementById('selectFileBtn');
@@ -9,43 +11,55 @@ document.addEventListener('DOMContentLoaded', function() {
   const successModal = document.getElementById('successModal');
 
   let selectedFile = null;
+  
+  // Remove any existing event listeners to prevent duplicates
+  const newForm = form.cloneNode(true);
+  form.parentNode.replaceChild(newForm, form);
+  
+  // Re-get references after cloning
+  const cleanForm = document.getElementById('submissionForm');
+  const cleanFileUploadArea = document.getElementById('fileUploadArea');
+  const cleanVideoFileInput = document.getElementById('videoFile');
+  const cleanSelectFileBtn = document.getElementById('selectFileBtn');
+  const cleanFilePreview = document.getElementById('filePreview');
+  const cleanRemoveFileBtn = document.getElementById('removeFile');
 
   // File upload area click handler
-  fileUploadArea.addEventListener('click', (e) => {
-    if (e.target !== selectFileBtn) {
-      videoFileInput.click();
+  cleanFileUploadArea.addEventListener('click', (e) => {
+    if (e.target !== cleanSelectFileBtn) {
+      cleanVideoFileInput.click();
     }
   });
 
   // Select file button handler
-  selectFileBtn.addEventListener('click', (e) => {
+  cleanSelectFileBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    videoFileInput.click();
+    cleanVideoFileInput.click();
   });
 
   // File input change handler
-  videoFileInput.addEventListener('change', handleFileSelect);
+  cleanVideoFileInput.addEventListener('change', handleFileSelect);
 
   // Drag and drop handlers
-  fileUploadArea.addEventListener('dragover', (e) => {
+  cleanFileUploadArea.addEventListener('dragover', (e) => {
     e.preventDefault();
-    fileUploadArea.classList.add('dragover');
+    cleanFileUploadArea.classList.add('dragover');
   });
 
-  fileUploadArea.addEventListener('dragleave', (e) => {
+  cleanFileUploadArea.addEventListener('dragleave', (e) => {
     e.preventDefault();
-    fileUploadArea.classList.remove('dragover');
+    cleanFileUploadArea.classList.remove('dragover');
   });
 
-  fileUploadArea.addEventListener('drop', (e) => {
+  cleanFileUploadArea.addEventListener('drop', (e) => {
     e.preventDefault();
-    fileUploadArea.classList.remove('dragover');
+    cleanFileUploadArea.classList.remove('dragover');
     
     const files = e.dataTransfer.files;
     if (files.length > 0) {
       const file = files[0];
       if (file.type.startsWith('video/')) {
-        videoFileInput.files = files;
+        cleanVideoFileInput.files = files;
         handleFileSelect();
       } else {
         alert('Please select a valid video file.');
@@ -55,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Handle file selection
   function handleFileSelect() {
-    const file = videoFileInput.files[0];
+    const file = cleanVideoFileInput.files[0];
     if (file) {
       selectedFile = file;
       showFilePreview(file);
@@ -64,26 +78,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Show file preview
   function showFilePreview(file) {
-    const fileName = filePreview.querySelector('.file-name');
-    const fileSize = filePreview.querySelector('.file-size');
+    const fileName = cleanFilePreview.querySelector('.file-name');
+    const fileSize = cleanFilePreview.querySelector('.file-size');
     
     fileName.textContent = file.name;
     fileSize.textContent = videoStorage.formatFileSize(file.size);
     
-    filePreview.style.display = 'block';
-    fileUploadArea.style.display = 'none';
+    cleanFilePreview.style.display = 'block';
+    cleanFileUploadArea.style.display = 'none';
   }
 
   // Remove file handler
-  removeFileBtn.addEventListener('click', () => {
+  cleanRemoveFileBtn.addEventListener('click', () => {
     selectedFile = null;
-    videoFileInput.value = '';
-    filePreview.style.display = 'none';
-    fileUploadArea.style.display = 'block';
+    cleanVideoFileInput.value = '';
+    cleanFilePreview.style.display = 'none';
+    cleanFileUploadArea.style.display = 'block';
   });
 
   // Form submission handler
-  form.addEventListener('submit', async (e) => {
+  cleanForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     if (!selectedFile) {
@@ -91,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
-    const submitBtn = form.querySelector('.submit-btn');
+    const submitBtn = cleanForm.querySelector('.submit-btn');
     const originalText = submitBtn.textContent;
     
     try {
@@ -100,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
       submitBtn.disabled = true;
 
       // Get form data
-      const formData = new FormData(form);
+      const formData = new FormData(cleanForm);
       const videoTitle = formData.get('videoTitle').trim();
       const teamCount = formData.get('teamCount');
 
@@ -128,8 +142,8 @@ document.addEventListener('DOMContentLoaded', function() {
       showSuccessModal();
 
       // Reset form
-      form.reset();
-      removeFileBtn.click();
+      cleanForm.reset();
+      cleanRemoveFileBtn.click();
       
     } catch (error) {
       console.error('Submission error:', error);
@@ -152,12 +166,3 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
-
-  // Validate file size (optional - can be adjusted based on requirements)
-  function validateFileSize(file, maxSizeMB = 500) {
-    const maxSizeBytes = maxSizeMB * 1024 * 1024;
-    if (file.size > maxSizeBytes) {
-      throw new Error(`File size should be less than ${maxSizeMB}MB`);
-    }
-  }
-});

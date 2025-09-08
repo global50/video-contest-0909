@@ -10,29 +10,43 @@
   <body>
     <div class="container">
       <header>
-        <h1>Video Contest Platform</h1>
-        <p>Welcome to the video contest submission and management system</p>
-      </header>
-      
-      <main class="main-content">
-        <div class="card-grid">
-          <div class="feature-card">
-            <div class="card-icon">📝</div>
-            <h2>Submit Your Video</h2>
-            <p>Upload your contest entry with team details and video file</p>
-            <a href="submission.html" class="btn btn-primary">Go to Submission Form</a>
-          </div>
-          
-          <div class="feature-card">
-            <div class="card-icon">📊</div>
-            <h2>Manager Dashboard</h2>
-            <p>View all contest submissions and manage entries</p>
-            <a href="dashboard.html" class="btn btn-secondary">View Dashboard</a>
-          </div>
+        <div id="app">
+          <!-- Content will be loaded here based on route -->
         </div>
-      </main>
+      </header>
+    </div>
+    
+    <!-- Success Modal -->
+    <div id="successModal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <h3>Submission Successful!</h3>
+        <p>Your video has been submitted to the contest.</p>
+        <div class="modal-actions">
+          <button onclick="router.navigate('/submit')" class="btn btn-outline">Submit Another</button>
+          <button onclick="router.navigate('/manager')" class="btn btn-primary">View Dashboard</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Video Modal -->
+    <div id="videoModal" class="modal" style="display: none;">
+      <div class="modal-content video-modal-content">
+        <div class="modal-header">
+          <h3 id="videoModalTitle">Video Player</h3>
+          <button class="modal-close" id="closeVideoModal">×</button>
+        </div>
+        <div class="video-container">
+          <video id="modalVideo" controls>
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
     </div>
     
     <script src="storage.js"></script>
+    <script src="router.js"></script>
+    <script src="submission.js"></script>
+    <script src="dashboard.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>

@@ -1,6 +1,8 @@
-// Dashboard functionality
-document.addEventListener('DOMContentLoaded', function() {
+// Dashboard functionality - now called by router
+function initializeDashboard() {
   const submissionsTableBody = document.getElementById('submissionsTableBody');
+  if (!submissionsTableBody) return; // Exit if elements not found
+  
   const emptyState = document.getElementById('emptyState');
   const totalSubmissionsEl = document.getElementById('totalSubmissions');
   const totalParticipantsEl = document.getElementById('totalParticipants');
@@ -30,11 +32,15 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Keyboard navigation for modal
-  document.addEventListener('keydown', (e) => {
+  const handleKeydown = (e) => {
     if (e.key === 'Escape' && videoModal.style.display === 'flex') {
       closeModal();
     }
-  });
+  };
+  
+  // Remove existing listener and add new one
+  document.removeEventListener('keydown', handleKeydown);
+  document.addEventListener('keydown', handleKeydown);
 
   // Load and display dashboard data
   function loadDashboard() {
@@ -149,4 +155,3 @@ document.addEventListener('DOMContentLoaded', function() {
       loadDashboard();
     }
   }, 30000);
-});

@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     app.innerHTML = `
       <header>
-        <h1>Video Contest Submission</h1>
+        <h3>Video Contest Submission</h1>
       </header>
       
       <main>

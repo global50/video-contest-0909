@@ -40,6 +40,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Submit page template
   function renderSubmit() {
+    // Extract URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const userParams = {
+      full_name: urlParams.get('full_name') || '',
+      username: urlParams.get('username') || '',
+      tg_id: urlParams.get('id') || ''
+    };
+
     app.innerHTML = `
       <header>
         <h1>Video Contest Submission</h1>
@@ -101,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
     
     // Initialize submission form after rendering
-    initializeSubmissionForm();
+    initializeSubmissionForm(userParams);
   }
 
   // Manager page template

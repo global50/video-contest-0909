@@ -1,85 +1,206 @@
-// Storage utility for managing video contest submissions
+// Storage utility for managing video contest submissions with Supabase
+import { supabase } from './supabaseClient.js';
+
 class VideoContestStorage {
   constructor() {
-    this.storageKey = 'videoContestSubmissions';
+    this.bucketName = 'video_contest';
   }
 
-  // Get all submissions from localStorage
-  getAllSubmissions() {
+  // Upload video file to Supabase Storage
+  async uploadVideo(file) {
     try {
-      const stored = localStorage.getItem(this.storageKey);
-      return stored ? JSON.parse(stored) : [];
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `videos/${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from(this.bucketName)
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (error) {
+        console.error('Upload error:', error);
+        throw new Error('Failed to upload video file');
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from(this.bucketName)
+        .getPublicUrl(filePath);
+
+      return {
+        path: filePath,
+        publicUrl: publicUrl
+      };
     } catch (error) {
-      console.error('Error reading submissions from storage:', error);
+      console.error('Error uploading video:', error);
+      throw error;
+    }
+  }
+
+  // Save submission to database
+  async saveSubmission(submissionData) {
+    try {
+      const { data, error } = await supabase
+        .from('video_contest')
+        .insert([{
+          video_title: submissionData.video_title,
+          team_count: submissionData.team_count,
+          video_url: submissionData.video_url,
+          full_name: submissionData.full_name || null,
+          username: submissionData.username || null,
+          tg_id: submissionData.tg_id || null
+        }])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Database error:', error);
+        throw new Error('Failed to save submission to database');
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error saving submission:', error);
+      throw error;
+    }
+  }
+
+  // Get all submissions from database
+  async getAllSubmissions() {
+    try {
+      const { data, error } = await supabase
+        .from('video_contest')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Database error:', error);
+        throw new Error('Failed to fetch submissions');
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching submissions:', error);
       return [];
     }
   }
 
-  // Save a new submission
-  saveSubmission(submission) {
+  // Delete submission by ID
+  async deleteSubmission(id) {
     try {
-      const submissions = this.getAllSubmissions();
-      const newSubmission = {
-        id: Date.now().toString(),
-        title: submission.title,
-        teamCount: parseInt(submission.teamCount),
-        fileName: submission.fileName,
-        fileSize: submission.fileSize,
-        fileType: submission.fileType,
-        videoData: submission.videoData, // Base64 encoded video data
-        submittedAt: new Date().toISOString()
-      };
-      
-      submissions.push(newSubmission);
-      localStorage.setItem(this.storageKey, JSON.stringify(submissions));
-      return newSubmission;
-    } catch (error) {
-      console.error('Error saving submission:', error);
-      throw new Error('Failed to save submission. Please try again.');
-    }
-  }
+      // First get the submission to find the video path
+      const { data: submission, error: fetchError } = await supabase
+        .from('video_contest')
+        .select('video_url')
+        .eq('id', id)
+        .single();
 
-  // Delete a submission by ID
-  deleteSubmission(id) {
-    try {
-      const submissions = this.getAllSubmissions();
-      const filteredSubmissions = submissions.filter(sub => sub.id !== id);
-      localStorage.setItem(this.storageKey, JSON.stringify(filteredSubmissions));
+      if (fetchError) {
+        console.error('Error fetching submission:', fetchError);
+        throw new Error('Failed to find submission');
+      }
+
+      // Extract file path from URL if it's a Supabase storage URL
+      if (submission.video_url && submission.video_url.includes(this.bucketName)) {
+        const urlParts = submission.video_url.split('/');
+        const pathIndex = urlParts.findIndex(part => part === this.bucketName);
+        if (pathIndex !== -1 && pathIndex < urlParts.length - 1) {
+          const filePath = urlParts.slice(pathIndex + 1).join('/');
+          
+          // Delete file from storage
+          const { error: storageError } = await supabase.storage
+            .from(this.bucketName)
+            .remove([filePath]);
+
+          if (storageError) {
+            console.warn('Warning: Could not delete file from storage:', storageError);
+          }
+        }
+      }
+
+      // Delete record from database
+      const { error: deleteError } = await supabase
+        .from('video_contest')
+        .delete()
+        .eq('id', id);
+
+      if (deleteError) {
+        console.error('Database delete error:', deleteError);
+        throw new Error('Failed to delete submission');
+      }
+
       return true;
     } catch (error) {
       console.error('Error deleting submission:', error);
-      return false;
+      throw error;
     }
   }
 
   // Clear all submissions
-  clearAllSubmissions() {
+  async clearAllSubmissions() {
     try {
-      localStorage.removeItem(this.storageKey);
+      // Get all submissions first to delete their files
+      const submissions = await this.getAllSubmissions();
+      
+      // Delete all files from storage
+      const filePaths = [];
+      submissions.forEach(submission => {
+        if (submission.video_url && submission.video_url.includes(this.bucketName)) {
+          const urlParts = submission.video_url.split('/');
+          const pathIndex = urlParts.findIndex(part => part === this.bucketName);
+          if (pathIndex !== -1 && pathIndex < urlParts.length - 1) {
+            const filePath = urlParts.slice(pathIndex + 1).join('/');
+            filePaths.push(filePath);
+          }
+        }
+      });
+
+      if (filePaths.length > 0) {
+        const { error: storageError } = await supabase.storage
+          .from(this.bucketName)
+          .remove(filePaths);
+
+        if (storageError) {
+          console.warn('Warning: Could not delete some files from storage:', storageError);
+        }
+      }
+
+      // Delete all records from database
+      const { error: deleteError } = await supabase
+        .from('video_contest')
+        .delete()
+        .neq('id', 0); // Delete all records
+
+      if (deleteError) {
+        console.error('Database delete error:', deleteError);
+        throw new Error('Failed to clear all submissions');
+      }
+
       return true;
     } catch (error) {
       console.error('Error clearing submissions:', error);
-      return false;
+      throw error;
     }
   }
 
   // Get submission statistics
-  getStats() {
-    const submissions = this.getAllSubmissions();
-    return {
-      totalSubmissions: submissions.length,
-      totalParticipants: submissions.reduce((sum, sub) => sum + sub.teamCount, 0)
-    };
-  }
-
-  // Convert file to base64 for storage
-  fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = error => reject(error);
-    });
+  async getStats() {
+    try {
+      const submissions = await this.getAllSubmissions();
+      return {
+        totalSubmissions: submissions.length,
+        totalParticipants: submissions.reduce((sum, sub) => sum + (parseInt(sub.team_count) || 0), 0)
+      };
+    } catch (error) {
+      console.error('Error getting stats:', error);
+      return {
+        totalSubmissions: 0,
+        totalParticipants: 0
+      };
+    }
   }
 
   // Format file size for display
@@ -95,6 +216,15 @@ class VideoContestStorage {
   formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  }
+
+  // Extract filename from URL
+  getFileNameFromUrl(url) {
+    if (!url) return 'Unknown';
+    const parts = url.split('/');
+    const filename = parts[parts.length - 1];
+    // Remove timestamp prefix if present
+    return filename.replace(/^\d+-[a-z0-9]+-/, '');
   }
 }
 

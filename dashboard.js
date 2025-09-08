@@ -16,10 +16,21 @@ function initializeDashboard() {
   loadDashboard();
 
   // Clear all submissions handler
-  clearAllBtn.addEventListener('click', () => {
+  clearAllBtn.addEventListener('click', async () => {
     if (confirm('Are you sure you want to delete all submissions? This action cannot be undone.')) {
-      videoStorage.clearAllSubmissions();
-      loadDashboard();
+      try {
+        clearAllBtn.textContent = 'Deleting...';
+        clearAllBtn.disabled = true;
+        
+        await videoStorage.clearAllSubmissions();
+        await loadDashboard();
+      } catch (error) {
+        console.error('Error clearing submissions:', error);
+        alert('Failed to clear submissions. Please try again.');
+      } finally {
+        clearAllBtn.textContent = 'Clear All Submissions';
+        clearAllBtn.disabled = false;
+      }
     }
   });
 
@@ -43,25 +54,41 @@ function initializeDashboard() {
   document.addEventListener('keydown', handleKeydown);
 
   // Load and display dashboard data
-  function loadDashboard() {
-    const submissions = videoStorage.getAllSubmissions();
-    const stats = videoStorage.getStats();
-    
-    // Update statistics
-    updateStats(stats);
-    
-    // Clear current table content
-    submissionsTableBody.innerHTML = '';
-    
-    if (submissions.length === 0) {
-      // Show empty state
-      submissionsTableBody.appendChild(emptyState);
-    } else {
-      // Hide empty state and populate table
-      submissions.forEach(submission => {
-        const row = createSubmissionRow(submission);
-        submissionsTableBody.appendChild(row);
-      });
+  async function loadDashboard() {
+    try {
+      const [submissions, stats] = await Promise.all([
+        videoStorage.getAllSubmissions(),
+        videoStorage.getStats()
+      ]);
+      
+      // Update statistics
+      updateStats(stats);
+      
+      // Clear current table content
+      submissionsTableBody.innerHTML = '';
+      
+      if (submissions.length === 0) {
+        // Show empty state
+        submissionsTableBody.appendChild(emptyState);
+      } else {
+        // Hide empty state and populate table
+        submissions.forEach(submission => {
+          const row = createSubmissionRow(submission);
+          submissionsTableBody.appendChild(row);
+        });
+      }
+    } catch (error) {
+      console.error('Error loading dashboard:', error);
+      // Show error state
+      submissionsTableBody.innerHTML = `
+        <tr>
+          <td colspan="5" class="empty-state">
+            <div class="empty-icon">⚠️</div>
+            <p>Error loading submissions</p>
+            <button onclick="location.reload()" class="btn btn-primary">Retry</button>
+          </td>
+        </tr>
+      `;
     }
   }
 
@@ -74,17 +101,20 @@ function initializeDashboard() {
   // Create a table row for a submission
   function createSubmissionRow(submission) {
     const row = document.createElement('tr');
+    const fileName = videoStorage.getFileNameFromUrl(submission.video_url);
+    
     row.innerHTML = `
       <td>
-        <div class="submission-title">${escapeHtml(submission.title)}</div>
+        <div class="submission-title">${escapeHtml(submission.video_title || 'Untitled')}</div>
+        ${submission.full_name ? `<div class="submission-author" style="font-size: 0.875rem; color: var(--gray-500);">by ${escapeHtml(submission.full_name)}</div>` : ''}
       </td>
       <td>
-        <span class="team-count">${submission.teamCount} ${submission.teamCount === 1 ? 'person' : 'people'}</span>
+        <span class="team-count">${submission.team_count || 1} ${(submission.team_count || 1) === 1 ? 'person' : 'people'}</span>
       </td>
       <td>
-        <div class="submission-date">${videoStorage.formatDate(submission.submittedAt)}</div>
+        <div class="submission-date">${videoStorage.formatDate(submission.created_at)}</div>
         <div class="file-info" style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">
-          ${escapeHtml(submission.fileName)} (${videoStorage.formatFileSize(submission.fileSize)})
+          ${escapeHtml(fileName)}
         </div>
       </td>
       <td>
@@ -104,30 +134,53 @@ function initializeDashboard() {
   }
 
   // Play video in modal
-  window.playVideo = function(submissionId) {
-    const submissions = videoStorage.getAllSubmissions();
-    const submission = submissions.find(s => s.id === submissionId);
-    
-    if (submission) {
-      videoModalTitle.textContent = submission.title;
-      modalVideo.src = submission.videoData;
-      videoModal.style.display = 'flex';
+  window.playVideo = async function(submissionId) {
+    try {
+      const submissions = await videoStorage.getAllSubmissions();
+      const submission = submissions.find(s => s.id == submissionId);
       
-      // Play video when modal opens
-      modalVideo.play().catch(e => {
-        console.log('Auto-play prevented:', e);
-      });
+      if (submission && submission.video_url) {
+        videoModalTitle.textContent = submission.video_title || 'Video';
+        modalVideo.src = submission.video_url;
+        videoModal.style.display = 'flex';
+        
+        // Play video when modal opens
+        modalVideo.play().catch(e => {
+          console.log('Auto-play prevented:', e);
+        });
+      }
+    } catch (error) {
+      console.error('Error playing video:', error);
+      alert('Failed to load video');
     }
   };
 
   // Delete submission
-  window.deleteSubmission = function(submissionId) {
-    const submissions = videoStorage.getAllSubmissions();
-    const submission = submissions.find(s => s.id === submissionId);
-    
-    if (submission && confirm(`Are you sure you want to delete "${submission.title}"?`)) {
-      videoStorage.deleteSubmission(submissionId);
-      loadDashboard();
+  window.deleteSubmission = async function(submissionId) {
+    try {
+      const submissions = await videoStorage.getAllSubmissions();
+      const submission = submissions.find(s => s.id == submissionId);
+      
+      if (submission && confirm(`Are you sure you want to delete "${submission.video_title || 'this submission'}"?`)) {
+        // Find and disable the delete button
+        const deleteBtn = document.querySelector(`button[onclick="deleteSubmission('${submissionId}')"]`);
+        if (deleteBtn) {
+          deleteBtn.textContent = 'Deleting...';
+          deleteBtn.disabled = true;
+        }
+        
+        await videoStorage.deleteSubmission(submissionId);
+        await loadDashboard();
+      }
+    } catch (error) {
+      console.error('Error deleting submission:', error);
+      alert('Failed to delete submission. Please try again.');
+      // Re-enable button on error
+      const deleteBtn = document.querySelector(`button[onclick="deleteSubmission('${submissionId}')"]`);
+      if (deleteBtn) {
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.disabled = false;
+      }
     }
   };
 
@@ -145,14 +198,18 @@ function initializeDashboard() {
     return div.innerHTML;
   }
 
-  // Auto-refresh dashboard every 30 seconds (in case of multiple users)
-  setInterval(() => {
-    const currentSubmissions = videoStorage.getAllSubmissions().length;
-    const displayedRows = submissionsTableBody.querySelectorAll('tr:not(#emptyState)').length;
-    
-    // Only reload if submission count has changed
-    if (currentSubmissions !== displayedRows) {
-      loadDashboard();
+  // Auto-refresh dashboard every 30 seconds
+  setInterval(async () => {
+    try {
+      const currentSubmissions = await videoStorage.getAllSubmissions();
+      const displayedRows = submissionsTableBody.querySelectorAll('tr:not(#emptyState)').length;
+      
+      // Only reload if submission count has changed
+      if (currentSubmissions.length !== displayedRows) {
+        await loadDashboard();
+      }
+    } catch (error) {
+      console.error('Error in auto-refresh:', error);
     }
   }, 30000);
 }

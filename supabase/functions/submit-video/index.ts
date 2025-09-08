@@ -7,6 +7,9 @@ interface SubmissionData {
   full_name?: string;
   username?: string;
   tg_id?: string;
+  full_name?: string;
+  username?: string;
+  tg_id?: string;
 }
 
 Deno.serve(async (req: Request) => {

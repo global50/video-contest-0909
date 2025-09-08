@@ -1,5 +1,5 @@
 // Submission form functionality - now called by router
-function initializeSubmissionForm() {
+function initializeSubmissionForm(userParams = {}) {
   const form = document.getElementById('submissionForm');
   if (!form) return; // Exit if form not found
   
@@ -122,21 +122,38 @@ function initializeSubmissionForm() {
         throw new Error('Please enter a video title.');
       }
 
-      // Convert file to base64 for storage
-      const videoData = await videoStorage.fileToBase64(selectedFile);
+      // Upload video to Supabase Storage
+      submitBtn.textContent = 'Uploading video...';
+      const uploadResult = await videoStorage.uploadVideo(selectedFile);
 
-      // Create submission object
-      const submission = {
-        title: videoTitle,
-        teamCount: teamCount,
-        fileName: selectedFile.name,
-        fileSize: selectedFile.size,
-        fileType: selectedFile.type,
-        videoData: videoData
+      // Prepare submission data for edge function
+      const submissionData = {
+        video_title: videoTitle,
+        team_count: parseInt(teamCount),
+        video_url: uploadResult.publicUrl,
+        full_name: userParams.full_name || null,
+        username: userParams.username || null,
+        tg_id: userParams.tg_id || null
       };
 
-      // Save submission
-      videoStorage.saveSubmission(submission);
+      // Call edge function
+      submitBtn.textContent = 'Saving submission...';
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/submit-video`;
+      
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submissionData)
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to submit video');
+      }
 
       // Show success modal
       showSuccessModal();

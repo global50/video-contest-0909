@@ -96,6 +96,15 @@ export function initializeDashboard() {
         </button>
       </td>
       <td>
+        <button class="download-btn" onclick="downloadVideo('${submission.id}')" title="Download video">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7,10 12,15 17,10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </button>
+      </td>
+      <td>
         <span class="team-count">${submission.team_count || 1}</span>
       </td>
       <td>
@@ -127,6 +136,68 @@ export function initializeDashboard() {
     }
   };
 
+  // Download video function
+  window.downloadVideo = async function(submissionId) {
+    try {
+      const submissions = await videoStorage.getAllSubmissions();
+      const submission = submissions.find(s => s.id == submissionId);
+      
+      if (submission && submission.video_url) {
+        // Show loading state
+        const downloadBtn = document.querySelector(`button[onclick="downloadVideo('${submissionId}')"]`);
+        const originalHTML = downloadBtn.innerHTML;
+        downloadBtn.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4-2"/>
+          </svg>
+        `;
+        downloadBtn.disabled = true;
+        
+        // Create a temporary anchor element for download
+        const link = document.createElement('a');
+        link.href = submission.video_url;
+        link.download = `${submission.video_title || 'video'}.mp4`;
+        link.target = '_blank';
+        
+        // For cross-origin URLs, we need to fetch and create blob
+        try {
+          const response = await fetch(submission.video_url);
+          if (!response.ok) throw new Error('Network response was not ok');
+          
+          const blob = await response.blob();
+          const blobUrl = window.URL.createObjectURL(blob);
+          
+          link.href = blobUrl;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          // Clean up blob URL
+          setTimeout(() => window.URL.revokeObjectURL(blobUrl), 100);
+          
+        } catch (fetchError) {
+          console.warn('Fetch failed, trying direct download:', fetchError);
+          // Fallback to direct download (may not work for cross-origin)
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+        
+        // Restore button state
+        setTimeout(() => {
+          downloadBtn.innerHTML = originalHTML;
+          downloadBtn.disabled = false;
+        }, 1000);
+        
+      } else {
+        alert('Video not found or URL is missing');
+      }
+    } catch (error) {
+      console.error('Error downloading video:', error);
+      alert('Failed to download video');
+    }
+  };
   // Close video modal
   function closeModal() {
     videoModal.style.display = 'none';

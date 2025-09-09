@@ -484,6 +484,36 @@ tr:hover {
   transform: scale(1.1);
 }
 
+.download-btn {
+  background: var(--primary-color);
+  color: var(--white);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  margin-left: 0.5rem;
+}
+
+.download-btn:hover {
+  background-color: var(--primary-hover);
+  transform: scale(1.1);
+}
+
+.download-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.download-btn:disabled:hover {
+  background-color: var(--primary-color);
+  transform: none;
+}
 .delete-btn {
   background: var(--danger-color);
   color: var(--white);

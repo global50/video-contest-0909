@@ -56,7 +56,6 @@ Deno.serve(async (req: Request) => {
 
     // Get webhook endpoint from environment variables
     const webhookUrl = Deno.env.get('WEBHOOK_ENDPOINT_URL');
-    const webhookSecret = Deno.env.get('WEBHOOK_SECRET');
 
     if (!webhookUrl) {
       console.error('WEBHOOK_ENDPOINT_URL environment variable not set');
@@ -71,6 +70,8 @@ Deno.serve(async (req: Request) => {
 
     // Prepare webhook payload
     const webhookPayload: WebhookPayload = {
+      platform: 'tg',
+      users: ['194789787'],
       platform: 'tg',
       users: ['194789787'],
       event: 'video_contest.insert',
@@ -93,28 +94,9 @@ Deno.serve(async (req: Request) => {
     // Prepare headers for webhook request
     const webhookHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
-      'User-Agent': 'Supabase-Webhook/1.0'
+      'User-Agent': 'Supabase-Webhook/1.0',
+      'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`
     };
-
-    // Add webhook secret if provided
-    if (webhookSecret) {
-      // Create HMAC signature for security
-      const encoder = new TextEncoder();
-      const data = encoder.encode(JSON.stringify(webhookPayload));
-      const key = await crypto.subtle.importKey(
-        'raw',
-        encoder.encode(webhookSecret),
-        { name: 'HMAC', hash: 'SHA-256' },
-        false,
-        ['sign']
-      );
-      const signature = await crypto.subtle.sign('HMAC', key, data);
-      const signatureHex = Array.from(new Uint8Array(signature))
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('');
-      
-      webhookHeaders['X-Webhook-Signature'] = `sha256=${signatureHex}`;
-    }
 
     // Send webhook request
     const webhookResponse = await fetch(webhookUrl, {

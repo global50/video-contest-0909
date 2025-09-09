@@ -55,7 +55,7 @@ Deno.serve(async (req: Request) => {
     console.log('Received new video contest submission:', JSON.stringify(record, null, 2));
 
     // Get webhook endpoint from environment variables
-    const webhookUrl = Deno.env.get('WEBHOOK_ENDPOINT_URL');
+    const webhookUrl = Deno.env.get('https://app.botmother.com/api/bot/action/z_FGzmBUl/CBCbDaCHBmBYSCMBwBkCRmDBBBDDDYVDEC_DPnpCqBqBUBKC7BDDZDGYDIpByDUg');
     const webhookSecret = Deno.env.get('WEBHOOK_SECRET');
 
     if (!webhookUrl) {

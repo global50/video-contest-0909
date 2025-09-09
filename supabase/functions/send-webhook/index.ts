@@ -71,6 +71,7 @@ Deno.serve(async (req: Request) => {
 
     // Prepare webhook payload
     const webhookPayload: WebhookPayload = {
+      platform: 'tg',
       event: 'video_contest.insert',
       data: {
         id: record.id,

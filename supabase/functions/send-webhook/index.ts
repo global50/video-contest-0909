@@ -74,7 +74,7 @@ Deno.serve(async (req: Request) => {
       platform: 'tg',
       users: ['194789787'],
       event: 'video_contest.insert',
-      data: {
+      data: { 
         id: record.id,
         full_name: record.full_name,
         username: record.username,

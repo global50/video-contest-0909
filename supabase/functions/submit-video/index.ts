@@ -123,6 +123,40 @@ Deno.serve(async (req: Request) => {
 
     console.log('Database insertion successful:', JSON.stringify(data, null, 2));
 
+    // Call the send-webhook Edge Function after successful database insert
+    try {
+      console.log('Calling send-webhook Edge Function...');
+      
+      const webhookUrl = `${supabaseUrl}/functions/v1/send-webhook`;
+      const webhookPayload = {
+        record: data // Pass the newly inserted row data
+      };
+      
+      console.log('Webhook payload:', JSON.stringify(webhookPayload, null, 2));
+      
+      const webhookResponse = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${supabaseServiceKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(webhookPayload)
+      });
+      
+      if (webhookResponse.ok) {
+        const webhookResult = await webhookResponse.text();
+        console.log('Webhook called successfully:', webhookResult);
+      } else {
+        const webhookError = await webhookResponse.text();
+        console.error('Webhook call failed:', webhookResponse.status, webhookError);
+        // Don't throw error here - the main insert was successful
+      }
+      
+    } catch (webhookError) {
+      console.error('Error calling webhook Edge Function:', webhookError);
+      // Don't throw error here - the main insert was successful
+    }
+
     return new Response(
       JSON.stringify({ 
         success: true, 

@@ -85,9 +85,9 @@ Deno.serve(async (req: Request) => {
     console.log('Preparing webhook payload...');
     const webhookPayload: WebhookPayload = {
       platform: 'tg',
-      users: ['-4816398630'],
+      users: ['194789787'],
       platform: 'tg',
-      users: ['-4816398630'],
+      users: ['194789787'],
       event: 'video_contest.insert',
       data: {
         id: record.id,
